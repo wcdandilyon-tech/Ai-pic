@@ -1,4 +1,4 @@
-import { buildPrompt, STYLES, DETAIL_FIELDS } from './lib/prompt.js';
+import { buildPrompt, STYLES } from './lib/prompt.js';
 
 const $ = (s) => document.querySelector(s);
 const form = $('#form');
@@ -17,7 +17,6 @@ try {
     allowNsfw: true,
     static: true,
     styles: Object.fromEntries(Object.entries(STYLES).map(([k, v]) => [k, v.label])),
-    fields: DETAIL_FIELDS,
   };
 }
 $('#backend').textContent = `backend: ${cfg.backend}`;
@@ -26,24 +25,13 @@ $('#nsfw-wrap').hidden = !cfg.allowNsfw;
 for (const [key, label] of Object.entries(cfg.styles)) {
   $('#style').append(new Option(label, key));
 }
-for (const [key, label] of cfg.fields) {
-  const l = document.createElement('label');
-  l.textContent = label;
-  const input = document.createElement('input');
-  input.name = `d_${key}`;
-  l.append(input);
-  $('#fields').append(l);
-}
 
 function readForm() {
   const f = new FormData(form);
-  const details = {};
-  for (const [key] of cfg.fields) details[key] = f.get(`d_${key}`);
   const [width, height] = f.get('size').split('x').map(Number);
   return {
     prompt: f.get('prompt'),
     style: f.get('style'),
-    details,
     negative: f.get('negative'),
     nsfw: cfg.allowNsfw && f.get('nsfw') === 'on',
     width, height,

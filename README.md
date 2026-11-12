@@ -1,10 +1,10 @@
 # Ai-pic
 
 A web UI for making detailed images from a text prompt. It's tuned for anime
-characters but works for any subject. You write a short idea, optionally fill
-in detail fields (hair, eyes, outfit, pose, setting, lighting, camera…), pick a
-style preset, and Ai-pic turns it into a full Stable Diffusion prompt with
-quality tags and a matching negative prompt. Then it generates the image.
+characters but works for any subject. You describe everything in one prompt box
+(character, hair, eyes, outfit, pose, setting, lighting, camera…), pick a style
+preset, and Ai-pic turns it into a full Stable Diffusion prompt with quality
+tags and a matching negative prompt. Then it generates the image.
 
 ## Use it as a website
 

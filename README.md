@@ -6,7 +6,18 @@ in detail fields (hair, eyes, outfit, pose, setting, lighting, camera…), pick 
 style preset, and Ai-pic turns it into a full Stable Diffusion prompt with
 quality tags and a matching negative prompt. Then it generates the image.
 
-## Run it
+## Use it as a website
+
+The app also runs as a plain website with no server. In that mode your browser
+asks the image service for pictures directly. Every push deploys it to GitHub
+Pages through `.github/workflows/pages.yml`.
+
+One-time setup: on GitHub, open **Settings → Pages** and set **Source** to
+**GitHub Actions**. Then re-run the "Deploy site" workflow (Actions tab). The
+site's address is shown on the Pages settings page and in the workflow run. It's
+usually `https://<your-username>.github.io/Ai-pic/`.
+
+## Run it on your computer
 
 Requires Node 22+. No npm dependencies.
 

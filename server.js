@@ -1,5 +1,6 @@
 // Zero-dependency server: serves the UI and proxies generation requests to an
 // image backend. Supported backends:
+//   pollinations - hosted, free, no API key or GPU needed (default)
 //   a1111 - AUTOMATIC1111 / SD WebUI Forge API (/sdapi/v1/txt2img), run locally
 //   mock  - returns a placeholder SVG, for trying the UI without a GPU
 import http from 'node:http';
@@ -10,9 +11,11 @@ import { buildPrompt, STYLES, DETAIL_FIELDS } from './lib/prompt.js';
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 const PORT = Number(process.env.PORT || 3000);
-const BACKEND = process.env.BACKEND || 'a1111';
+const BACKEND = process.env.BACKEND || 'pollinations';
+const POLLINATIONS_URL = (process.env.POLLINATIONS_URL || 'https://image.pollinations.ai').replace(/\/$/, '');
+const POLLINATIONS_MODEL = process.env.POLLINATIONS_MODEL || 'flux';
 const A1111_URL = (process.env.A1111_URL || 'http://127.0.0.1:7860').replace(/\/$/, '');
-const ALLOW_NSFW = process.env.ALLOW_NSFW === 'true';
+const ALLOW_NSFW = process.env.ALLOW_NSFW !== 'false';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -65,6 +68,36 @@ async function generateA1111(params) {
   return { images: data.images.map((b64) => `data:image/png;base64,${b64}`), seed };
 }
 
+async function generatePollinations(params) {
+  const base = params.seed >= 0 ? params.seed : Math.floor(Math.random() * 2 ** 31);
+  const one = async (seed) => {
+    const q = new URLSearchParams({
+      width: params.width,
+      height: params.height,
+      seed,
+      model: POLLINATIONS_MODEL,
+      negative_prompt: params.negative,
+      nologo: 'true',
+      private: 'true',
+      enhance: 'false',
+      safe: params.nsfw ? 'false' : 'true',
+    });
+    const r = await fetch(`${POLLINATIONS_URL}/prompt/${encodeURIComponent(params.positive)}?${q}`, {
+      signal: AbortSignal.timeout(180_000),
+    });
+    const type = r.headers.get('content-type') || '';
+    if (!r.ok || !type.startsWith('image/')) {
+      throw new Error(`Image service returned ${r.status}: ${(await r.text()).slice(0, 300)}`);
+    }
+    const b64 = Buffer.from(await r.arrayBuffer()).toString('base64');
+    return `data:${type.split(';')[0]};base64,${b64}`;
+  };
+  // Sequential: the free tier rate-limits parallel requests.
+  const images = [];
+  for (let i = 0; i < params.count; i++) images.push(await one(base + i));
+  return { images, seed: base };
+}
+
 function generateMock(params) {
   const seed = params.seed >= 0 ? params.seed : Math.floor(Math.random() * 2 ** 31);
   const images = Array.from({ length: params.count }, (_, i) => {
@@ -98,7 +131,9 @@ async function handleGenerate(req, res) {
   };
 
   try {
-    const out = BACKEND === 'mock' ? generateMock(params) : await generateA1111(params);
+    const gen = { mock: generateMock, a1111: generateA1111, pollinations: generatePollinations }[BACKEND];
+    if (!gen) throw new Error(`Unknown BACKEND "${BACKEND}"`);
+    const out = await gen({ ...params, nsfw });
     sendJson(res, 200, { ...out, positive: built.positive, negative: built.negative, nsfw });
   } catch (e) {
     sendJson(res, 502, { error: `Generation failed: ${e.message}` });

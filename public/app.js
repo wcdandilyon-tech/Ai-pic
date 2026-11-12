@@ -78,7 +78,7 @@ form.addEventListener('submit', async (e) => {
       seed.textContent = `seed ${data.seed + i}`;
       const dl = document.createElement('a');
       dl.href = src;
-      dl.download = `ai-pic-${data.seed + i}.png`;
+      dl.download = `ai-pic-${data.seed + i}.${src.slice(11, src.indexOf(';')).replace('jpeg', 'jpg').replace('svg+xml', 'svg')}`;
       dl.textContent = 'Download';
       cap.append(seed, dl);
       fig.append(img, cap);

@@ -19,15 +19,21 @@ npm test
 
 ### Image backend
 
-Ai-pic sends requests to an **AUTOMATIC1111** or **SD WebUI Forge** server
-started with `--api` (the default URL is `http://127.0.0.1:7860`). Load whatever
-checkpoint you like there. Anime models such as Illustrious, Pony, or Animagine
-XL fit the default "Anime" style.
+Pictures work out of the box. By default Ai-pic uses **Pollinations**, a free
+hosted image service, so you don't need an API key or a GPU. Set
+`POLLINATIONS_MODEL` to change its model (default `flux`). The free tier is
+rate-limited, so images are made one after another.
+
+For full control over models, set `BACKEND=a1111` and run your own
+**AUTOMATIC1111** or **SD WebUI Forge** server with `--api` (default URL
+`http://127.0.0.1:7860`). Anime checkpoints such as Illustrious, Pony, or
+Animagine XL fit the default "Anime" style.
 
 ## NSFW mode
 
-Set `ALLOW_NSFW=true` in `.env` to show the NSFW toggle. It's off by default.
-When it's on, the SFW negative tags are removed and adult tags are added.
+The NSFW toggle is shown by default (set `ALLOW_NSFW=false` to hide it). When
+you tick it, the SFW negative tags are removed, adult tags are added, and the
+hosted service's safety filter is turned off.
 
 **Adults only.** A filter that you can't turn off blocks any prompt that refers
 to a minor (for example *loli*, *teen*, *schoolgirl*, or ages under 18), in

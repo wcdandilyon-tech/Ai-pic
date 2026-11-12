@@ -68,7 +68,7 @@ test('pollinations backend builds the right request', async () => {
     assert.equal(seen.searchParams.get('safe'), 'false');
     assert.equal(seen.searchParams.get('seed'), '43');
     assert.equal(seen.searchParams.get('width'), '512');
-    assert.match(decodeURIComponent(seen.pathname), /adult woman.*woman/);
+    assert.match(decodeURIComponent(seen.pathname), /anime.*adult.*woman/);
   } finally {
     child.kill();
     fake.close();

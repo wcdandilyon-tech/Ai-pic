@@ -5,7 +5,8 @@ import { buildPrompt, findMinorReference } from '../lib/prompt.js';
 test('builds a detailed anime prompt from fields', () => {
   const r = buildPrompt({ prompt: 'woman in a cafe', style: 'anime', details: { hair: 'long silver hair', eyes: 'red eyes' } });
   assert.ok(r.ok);
-  assert.match(r.positive, /masterpiece/);
+  assert.match(r.positive, /anime art style/);
+  assert.match(r.negative, /photorealistic/);
   assert.match(r.positive, /woman in a cafe, long silver hair, red eyes/);
   assert.match(r.negative, /nsfw/); // SFW by default
   assert.match(r.negative, /loli/); // always steer away from minors
@@ -14,7 +15,7 @@ test('builds a detailed anime prompt from fields', () => {
 test('nsfw mode adds adult tags and drops the sfw negatives', () => {
   const r = buildPrompt({ prompt: 'woman on a beach', nsfw: true });
   assert.ok(r.ok);
-  assert.match(r.positive, /adult woman/);
+  assert.match(r.positive, /\badult\b/);
   assert.doesNotMatch(r.negative, /\bnsfw\b/);
 });
 

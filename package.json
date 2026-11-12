@@ -1,0 +1,13 @@
+{
+  "name": "ai-pic",
+  "version": "0.1.0",
+  "description": "Detailed prompt builder and image generator UI for Stable Diffusion (AUTOMATIC1111 / Forge).",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "mock": "BACKEND=mock node server.js",
+    "test": "node --test"
+  }
+}

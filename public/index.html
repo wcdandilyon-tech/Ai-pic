@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ai-pic</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <h1>Ai-pic</h1>
+    <span id="backend" class="badge"></span>
+  </header>
+
+  <main>
+    <form id="form">
+      <label>Prompt
+        <textarea name="prompt" rows="4" placeholder="e.g. a cheerful adult anime woman reading in a cozy cafe"></textarea>
+      </label>
+
+      <div class="row">
+        <label>Style <select name="style" id="style"></select></label>
+        <label>Size
+          <select name="size">
+            <option value="832x1216">Portrait 832×1216</option>
+            <option value="1024x1024">Square 1024×1024</option>
+            <option value="1216x832">Landscape 1216×832</option>
+            <option value="512x768">Small portrait 512×768</option>
+          </select>
+        </label>
+      </div>
+
+      <details open>
+        <summary>Details (optional — each one adds depth)</summary>
+        <div id="fields" class="grid"></div>
+      </details>
+
+      <details>
+        <summary>Advanced</summary>
+        <div class="grid">
+          <label>Steps <input name="steps" type="number" value="28" min="1" max="100"></label>
+          <label>CFG <input name="cfg" type="number" value="7" min="1" max="20" step="0.5"></label>
+          <label>Seed (-1 = random) <input name="seed" type="number" value="-1"></label>
+          <label>Images <input name="count" type="number" value="1" min="1" max="4"></label>
+          <label>Sampler <input name="sampler" value="Euler a"></label>
+        </div>
+        <label>Extra negative prompt <textarea name="negative" rows="2"></textarea></label>
+      </details>
+
+      <label id="nsfw-wrap" class="check" hidden>
+        <input type="checkbox" name="nsfw"> NSFW mode (adults only — 18+)
+      </label>
+
+      <details>
+        <summary>Final prompt preview</summary>
+        <pre id="preview"></pre>
+      </details>
+
+      <p id="error" class="error" hidden></p>
+      <button id="go" type="submit">Generate</button>
+    </form>
+
+    <section id="results"></section>
+  </main>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
